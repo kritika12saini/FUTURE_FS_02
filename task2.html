@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopNest | Modern E-Commerce Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS enhancements */
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-item:not(:last-child) {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        /* Pulse animation for cart updates */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        /* Smooth transitions */
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8e9fa23e-0758-40a7-8b17-c9f283fa2824.png" alt="ShopNest logo with a modern minimalist nest icon in blue tones" class="h-8 w-8">
+                        <span class="ml-2 text-xl font-bold text-gray-900">ShopNest</span>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Home
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Products
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Categories
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            About
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end">
+                        <div class="max-w-lg w-full lg:max-w-xs">
+                            <label for="search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <input id="search" name="search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Search products..." type="search">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button type="button" class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <span class="sr-only">View notifications</span>
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <div class="ml-3 relative">
+                            <div>
+                                <button onclick="toggleCart()" class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <span class="sr-only">View cart</span>
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span id="cart-count" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                    <span class="sr-only">Open user menu</span>
+                                    <img class="h-8 w-8 rounded-full" src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/cd316d3c-8d12-4963-a166-47dcf381a3aa.png" alt="Profile picture of user showing a generic person silhouette with blue background">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="bg-indigo-700">
+        <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                    Welcome to ShopNest
+                </h1>
+                <p class="mt-6 text-xl text-indigo-200 max-w-3xl mx-auto">
+                    Discover our curated collection of high-quality products for your home and lifestyle.
+                </p>
+                <div class="mt-10 flex justify-center space-x-6">
+                    <button class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50 md:py-4 md:text-lg md:px-10">
+                        Shop Now
+                    </button>
+                    <button class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 bg-opacity-60 hover:bg-opacity-70 md:py-4 md:text-lg md:px-10">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Filters and Sorting -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-2xl font-bold text-gray-900">Featured Products</h2>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div>
+                        <label for="category" class="sr-only">Category</label>
+                        <select id="category" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option selected>All Categories</option>
+                            <option>Electronics</option>
+                            <option>Fashion</option>
+                            <option>Home & Garden</option>
+                            <option>Sports</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sort" class="sr-only">Sort</label>
+                        <select id="sort" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option selected>Most Popular</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Newest Arrivals</option>
+                            <option>Top Rated</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="products-container">
+                <!-- Products will be loaded here via JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-20 overflow-y-auto">
+        <div class="p-6 flex flex-col h-full">
+            <div class="flex justify-between items-center border-b pb-4">
+                <h2 class="text-lg font-medium text-gray-900">Shopping Cart</h2>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Cart Items -->
+            <div class="flex-grow overflow-y-auto py-4" id="cart-items">
+                <!-- Cart items will be loaded here -->
+                <div class="text-center py-8">
+                    <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500">Your cart is empty</p>
+                </div>
+            </div>
+            
+            <!-- Cart Summary -->
+            <div class="border-t mt-4 pt-4" id="cart-summary" style="display: none;">
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Subtotal</span>
+                    <span id="cart-subtotal" class="font-medium">$0.00</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Shipping</span>
+                    <span class="font-medium">$0.00</span>
+                </div>
+                <div class="flex justify-between mb-4 font-bold">
+                    <span class="text-gray-900">Total</span>
+                    <span id="cart-total" class="text-indigo-600">$0.00</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 overflow-y-auto z-30 hidden">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Checkout</h3>
+                            <form id="checkout-form">
+                                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2 mb-6">
+                                    <div>
+                                        <label for="first-name" class="block text-sm font-medium text-gray-700">First name</label>
+                                        <input type="text" name="first-name" id="first-name" autocomplete="given-name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md required">
+                                    </div>
+                                    <div>
+                                        <label for="last-name" class="block text-sm font-medium text-gray-700">Last name</label>
+                                        <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md required">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                                        <input type="email" name="email" id="email" autocomplete="email" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md required">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                        <input type="text" name="address" id="address" autocomplete="street-address" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md required">
+                                    </div>
+                                    <div>
+                                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                        <input type="text" name="city" id="city" autocomplete="address-level2" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md required">
+                                    </div>
+                                    <div>
+                                        <label for="zip" class="block text-sm font-medium text-gray-700">ZIP/Postal code</label>
+                                        <input type="text" name="zip" id="zip" autocomplete="postal-code" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md required">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label for="payment" class="block text-sm font-medium text-gray-700">Payment Method</label>
+                                        <select id="payment" name="payment" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                            <option>Credit Card</option>
+                                            <option>PayPal</option>
+                                            <option>Bank Transfer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mb-4">
+                                    <input id="terms" name="terms" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded required">
+                                    <label for="terms" class="ml-2 block text-sm text-gray-900">
+                                        I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">terms and conditions</a>
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="processCheckout()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Place Order
+                    </button>
+                    <button type="button" onclick="closeCheckoutModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="order-confirmation" class="fixed inset-0 overflow-y-auto z-30 hidden">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-check text-green-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Order Confirmed!</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    Thank you for your purchase. Your order has been placed successfully.
+                                </p>
+                                <div class="mt-4 bg-gray-50 p-4 rounded">
+                                    <p class="text-sm font-medium text-gray-900">Order Summary</p>
+                                    <div id="order-summary" class="text-sm text-gray-500 mt-2">
+                                        <!-- Order summary will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="closeOrderConfirmation()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-12">
+        <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+            <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">About</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Blog</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Jobs</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Press</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Accessibility</a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base text-gray-500 hover:text-gray-900">Partners</a>
+                </div>
+            </nav>
+            <div class="mt-8 flex justify-center space-x-6">
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Facebook</span>
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Instagram</span>
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Twitter</span>
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">GitHub</span>
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">LinkedIn</span>
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+            <p class="mt-8 text-center text-base text-gray-400">
+                © 2023 ShopNest. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // State management
+        const state = {
+            products: [],
+            cart: [],
+            filteredProducts: []
+        };
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            updateCartCount();
+            
+            // Add event listeners for search and filters
+            document.getElementById('search').addEventListener('input', filterProducts);
+            document.getElementById('category').addEventListener('change', filterProducts);
+            document.getElementById('sort').addEventListener('change', filterProducts);
+            
+            // Validate checkout form inputs
+            const inputs = document.querySelectorAll('#checkout-form input, #checkout-form select');
+            inputs.forEach(input => {
+                input.addEventListener('blur', validateInput);
+            });
+        });
+
+        // Simulate loading products from an API
+        function loadProducts() {
+            // In a real app, this would be an API call
+            state.products = [
+                {
+                    id: 1,
+                    name: "Wireless Bluetooth Headphones",
+                    price: 89.99,
+                    description: "High-quality wireless headphones with noise cancellation and 30-hour battery life.",
+                    category: "Electronics",
+                    rating: 4.5,
+                    stock: 12,
+                    image: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3e0c488d-f358-467e-a9f7-b1cbe2588e98.png"
+                },
+                {
+                    id: 2,
+                    name: "Smart Watch Pro",
+                    price: 199.99,
+                    description: "Track your fitness and stay connected with notifications and health monitoring.",
+                    category: "Electronics",
+                    rating: 4.7,
+                    stock: 8,
+                    image: "https://placehold.co/600x400"
+                },
+                {
+                    id: 3,
+                    name: "Premium Coffee Maker",
+                    price: 149.99,
+                    description: "Brew barista-quality coffee at home with this premium coffee maker.",
+                    category: "Home",
+                    rating: 4.3,
+                    stock: 5,
+                    image: "https://placehold.co/600x400"
+                },
+                {
+                    id: 4,
+                    name: "Organic Cotton T-Shirt",
+                    price: 29.99,
+                    description: "Soft and comfortable organic cotton t-shirt available in multiple colors.",
+                    category: "Fashion",
+                    rating: 4.2,
+                    stock: 20,
+                    image: "https://placehold.co/600x400"
+                },
+                {
+                    id: 5,
+                    name: "Ultra HD Smart TV",
+                    price: 799.99,
+                    description: "65-inch Ultra HD Smart TV with HDR and built-in streaming apps.",
+                    category: "Electronics",
+                    rating: 4.8,
+                    stock: 3,
+                    image: "https://placehold.co/600x400"
+                },
+                {
+                    id: 6,
+                    name: "Yoga Mat",
+                    price: 35.99,
+                    description: "Non-slip, eco-friendly yoga mat with carrying strap.",
+                    category: "Sports",
+                    rating: 4.1,
+                    stock: 15,
+                    image: "https://placehold.co/600x400"
+                },
+                {
+                    id: 7,
+                    name: "Leather Wallet",
+                    price: 49.99,
+                    description: "Genuine leather wallet with multiple card slots and ID window.",
+                    category: "Fashion",
+                    rating: 4.4,
+                    stock: 10,
+                    image: "https://placehold.co/600x400"
+                },
+                {
+                    id: 8,
+                    name: "Air Purifier",
+                    price: 179.99,
+                    description: "HEPA air purifier with smart sensors for automatic operation.",
+                    category: "Home",
+                    rating: 4.6,
+                    stock: 7,
+                    image: "https://placehold.co/600x400"
+                }
+            ];
+            
+            state.filteredProducts = [...state.products];
+            renderProducts();
+        }
+
+        // Render products to the DOM
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+            
+            state.filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl';
+                productCard.innerHTML = `
+                    <div class="h-48 bg-gray-100 overflow-hidden">
+                        <img src="${product.image}" alt="${product.name} on a plain white background" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-medium text-gray-900 mb-1">${product.name}</h3>
+                        <p class="text-sm text-gray-500 mb-2">${product.category}</p>
+                        <div class="flex items-center mb-2">
+                            ${renderRating(product.rating)}
+                            <span class="text-xs text-gray-500 ml-1">(${product.rating})</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-indigo-600">$${product.price.toFixed(2)}</span>
+                            ${product.stock > 0 ? 
+                                `<button onclick="addToCart(${product.id})" class="text-sm bg-indigo-600 text-white py-1 px-3 rounded hover:bg-indigo-700">
+                                    Add to Cart
+                                </button>` : 
+                                '<span class="text-sm text-red-500">Out of Stock</span>'}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productCard);
+            });
+        }
+
+        // Render star ratings
+        function renderRating(rating) {
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star text-yellow-400"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt text-yellow-400"></i>';
+            }
+            
+            for (let i = 0; i < 5 - Math.ceil(rating); i++) {
+                stars += '<i class="far fa-star text-yellow-400"></i>';
+            }
+            
+            return stars;
+        }
+
+        // Filter products based on search and filters
+        function filterProducts() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const category = document.getElementById('category').value;
+            const sort = document.getElementById('sort').value;
+            
+            state.filteredProducts = state.products.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
+                                      product.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = category === 'All Categories' || product.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            // Sort products
+            switch(sort) {
+                case 'Price: Low to High':
+                    state.filteredProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'Price: High to Low':
+                    state.filteredProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'Newest Arrivals':
+                    // Assuming newer products have higher IDs
+                    state.filteredProducts.sort((a, b) => b.id - a.id);
+                    break;
+                case 'Top Rated':
+                    state.filteredProducts.sort((a, b) => b.rating - a.rating);
+                    break;
+                default:
+                    // Default is 'Most Popular' - could be based on sales, etc.
+                    break;
+            }
+            
+            renderProducts();
+        }
+
+        // Shopping cart functions
+        function addToCart(productId) {
+            const product = state.products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = state.cart.find(item => item.product.id === productId);
+            
+            if (existingItem) {
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity++;
+                } else {
+                    alert(`Only ${product.stock} units available in stock.`);
+                    return;
+                }
+            } else {
+                state.cart.push({ product, quantity: 1 });
+            }
+            
+            updateCart();
+            
+            // Visual feedback
+            const cartCount = document.getElementById('cart-count');
+            cartCount.classList.add('pulse');
+            setTimeout(() => cartCount.classList.remove('pulse'), 500);
+            
+            // Optionally open cart on add
+            if (state.cart.length === 1) {
+                toggleCart();
+            }
+        }
+
+        function updateCart() {
+            updateCartCount();
+            renderCartItems();
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = state.cart.reduce((total, item) => total + item.quantity, 0);
+        }
+
+        function renderCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartSummary = document.getElementById('cart-summary');
+            
+            if (state.cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Your cart is empty</p>
+                    </div>
+                `;
+                cartSummary.style.display = 'none';
+                return;
+            }
+            
+            cartSummary.style.display = 'block';
+            
+            let itemsHTML = '';
+            let subtotal = 0;
+            
+            state.cart.forEach(item => {
+                subtotal += item.product.price * item.quantity;
+                
+                itemsHTML += `
+                    <div class="cart-item py-4 flex">
+                        <div class="flex-shrink-0">
+                            <img src="${item.product.image}" alt="${item.product.name} thumbnail" class="h-16 w-16 object-cover rounded-md">
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between">
+                                <h3 class="text-sm font-medium text-gray-900">${item.product.name}</h3>
+                                <p class="text-sm font-medium text-gray-900">$${(item.product.price * item.quantity).toFixed(2)}</p>
+                            </div>
+                            <div class="flex justify-between mt-2">
+                                <div class="flex items-center">
+                                    <button onclick="updateQuantity(${item.product.id}, -1)" class="text-gray-500 hover:text-indigo-500">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="mx-2 text-sm text-gray-500 w-6 text-center">${item.quantity}</span>
+                                    <button onclick="updateQuantity(${item.product.id}, 1)" class="text-gray-500 hover:text-indigo-500" ${item.quantity >= item.product.stock ? 'disabled' : ''}>
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <button onclick="removeFromCart(${item.product.id})" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItemsContainer.innerHTML = itemsHTML;
+            document.getElementById('cart-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('cart-total').textContent = `$${subtotal.toFixed(2)}`;
+        }
+
+        function updateQuantity(productId, change) {
+            const index = state.cart.findIndex(item => item.product.id === productId);
+            if (index === -1) return;
+            
+            const newQuantity = state.cart[index].quantity + change;
+            
+            if (newQuantity < 1) {
+                removeFromCart(productId);
+                return;
+            }
+            
+            if (newQuantity > state.cart[index].product.stock) {
+                alert(`Only ${state.cart[index].product.stock} units available in stock.`);
+                return;
+            }
+            
+            state.cart[index].quantity = newQuantity;
+            updateCart();
+        }
+
+        function removeFromCart(productId) {
+            state.cart = state.cart.filter(item => item.product.id !== productId);
+            updateCart();
+        }
+
+        // Cart sidebar toggle
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            cartSidebar.classList.toggle('translate-x-full');
+        }
+
+        // Checkout functions
+        function checkout() {
+            if (state.cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            toggleCart();
+            openCheckoutModal();
+        }
+
+        function openCheckoutModal() {
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        function validateInput(e) {
+            const input = e.target;
+            if (input.classList.contains('required') && !input.value) {
+                input.classList.add('border-red-500');
+                input.classList.remove('border-gray-300');
+            } else {
+                input.classList.remove('border-red-500');
+                input.classList.remove('border-gray-300');
+                input.classList.add('border-gray-300');
+            }
+        }
+
+        function processCheckout() {
+            // Simple form validation
+            let isValid = true;
+            const inputs = document.querySelectorAll('#checkout-form input.required, #checkout-form select.required');
+            
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    input.classList.remove('border-red-500');
+                }
+            });
+            
+            if (!document.getElementById('terms').checked) {
+                document.getElementById('terms').parentElement.classList.add('text-red-500');
+                isValid = false;
+            } else {
+                document.getElementById('terms').parentElement.classList.remove('text-red-500');
+            }
+            
+            if (!isValid) {
+                alert('Please fill in all required fields and accept the terms.');
+                return;
+            }
+            
+            // In a real app, this would send data to the server
+            closeCheckoutModal();
+            showOrderConfirmation();
+        }
+
+        function showOrderConfirmation() {
+            // Prepare order summary
+            let summaryHTML = '';
+            let subtotal = 0;
+            
+            state.cart.forEach(item => {
+                subtotal += item.product.price * item.quantity;
+                summaryHTML += `
+                    <div class="flex justify-between">
+                        <span>${item.product.name} (${item.quantity})</span>
+                        <span>$${(item.product.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            
+            summaryHTML += `
+                <div class="border-t mt-2 pt-2 font-medium">
+                    <div class="flex justify-between">
+                        <span>Total</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('order-summary').innerHTML = summaryHTML;
+            
+            // Clear the cart
+            state.cart = [];
+            updateCart();
+            
+            // Show confirmation
+            document.getElementById('order-confirmation').classList.remove('hidden');
+        }
+
+        function closeOrderConfirmation() {
+            document.getElementById('order-confirmation').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+
